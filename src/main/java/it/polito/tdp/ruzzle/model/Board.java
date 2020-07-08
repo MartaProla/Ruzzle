@@ -15,7 +15,9 @@ import javafx.beans.property.StringProperty;
  */
 public class Board {
 	private List<Pos> positions;
-	private Map<Pos, StringProperty> cells;
+	private Map<Pos, StringProperty> cells; //mappa di celle 
+	// StringProperty --> il bottone sia collegato direttamente a queste property --> cambia String cambia il testo del bottone
+	
 
 	private int size;
 

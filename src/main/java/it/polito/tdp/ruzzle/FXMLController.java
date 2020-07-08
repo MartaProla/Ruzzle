@@ -1,7 +1,9 @@
 package it.polito.tdp.ruzzle;
 
+
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -90,16 +92,48 @@ public class FXMLController {
 
     @FXML
     void handleProva(ActionEvent event) {
+    	for(Button b: letters.values()) {
+    		b.setDefaultButton(false);
+    	}
+    	String parola=txtParola.getText();
+    	if(parola.length()<=1) {
+    		txtResult.appendText("Devi inserire parole di almeno due lettere");
+    	}
+    	parola=parola.toUpperCase();
+    	//controllo che ci siano solo caratteri alfabetici
+    	if(!parola.matches("[A-Z]+")) {
+    		txtResult.appendText("Devi inserire solo caratteri alfabetici");
+    	}
+    	
+    	List<Pos>percorso=model.trovaParola(parola);
+    	if(percorso!=null) {
+    		for(Pos p: percorso) {
+    			letters.get(p).setDefaultButton(true);
+    		}
+    	}
+    	else
+    		txtResult.appendText("Parola non trovata"+"\n");
 
     }
 
     @FXML
     void handleReset(ActionEvent event) {
     	model.reset();
+    	txtResult.clear();
+    	for(Button b: letters.values()) {
+    		b.setDefaultButton(false);
+    	}
+    	txtParola.clear();
     }
     
     @FXML
     void handleRisolvi(ActionEvent event) {
+    	List<String>tutte=model.trovaTutte();
+    	txtResult.clear();
+    	txtResult.appendText(String.format("Ho trovato %d soluzioni \n", tutte.size()));
+    	for( String s: tutte) {
+    		txtResult.appendText(s+"\n");
+    	}
 
     }
 
@@ -154,7 +188,7 @@ public class FXMLController {
     	this.letters.put(new Pos(3,3), let33) ;
 
     	for(Pos cell: m.getBoard().getPositions()) {
-    		this.letters.get(cell).textProperty().bind(m.getBoard().getCellValueProperty(cell));
+    		this.letters.get(cell).textProperty().bind(m.getBoard().getCellValueProperty(cell));// quando cambia string propriety cambia il testo nel bottone
     	}
     	
     	this.txtStatus.textProperty().bind(m.statusTextProperty());
